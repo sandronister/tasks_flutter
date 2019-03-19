@@ -27,6 +27,18 @@ class _HomeState extends State<Home> {
   List _todoList = [];
   final _taskController = TextEditingController();
 
+
+  @override
+  void initState() {
+    super.initState();
+
+     _readData().then((data){
+         setState(() {
+           this._todoList = json.decode(data);
+         });
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +83,7 @@ class _HomeState extends State<Home> {
                   onChanged: (c){
                     setState(() {
                       _todoList[index]['check']=c;
+                      _saveData();
                     });
                   },
                 );
@@ -90,6 +103,7 @@ class _HomeState extends State<Home> {
       task['check'] = false;
 
       _todoList.add(task);
+      _saveData();
     });
   }
 
