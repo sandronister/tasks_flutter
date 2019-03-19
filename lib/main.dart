@@ -24,7 +24,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  List<String> _todoList = ['Mario','Juca','Alex','Jorge'];
+  List _todoList = [];
+  final _taskController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,7 @@ class _HomeState extends State<Home> {
               children: <Widget>[
                 Expanded(
                     child: TextField(
+                      controller: _taskController,
                       decoration: InputDecoration(
                           labelText: 'Lista de tarefas',
                           labelStyle: TextStyle(color: Colors.blueAccent)
@@ -52,7 +54,7 @@ class _HomeState extends State<Home> {
                   color: Colors.blueAccent,
                   child: Text("Add"),
                   textColor: Colors.white,
-                  onPressed: (){},
+                  onPressed: addTask,
                 )
               ],
             ),
@@ -62,8 +64,15 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.only(top:7.0),
               itemCount: _todoList.length,
               itemBuilder: (context,index){
-                return ListTile(
-                  title: Text(_todoList[index]),
+                return CheckboxListTile(
+                  title: Text(_todoList[index]['nome']),
+                  value:_todoList[index]['check'],
+                  secondary: Icon(_todoList[index]['check']?Icons.check:Icons.info),
+                  onChanged: (c){
+                    setState(() {
+                      _todoList[index]['check']=c;
+                    });
+                  },
                 );
               },
             ),
@@ -71,6 +80,17 @@ class _HomeState extends State<Home> {
         ],
       )
     );
+  }
+
+  void addTask(){
+    setState(() {
+      Map<String,dynamic> task = new Map();
+      task['nome'] = _taskController.text;
+      _taskController.text = '';
+      task['check'] = false;
+
+      _todoList.add(task);
+    });
   }
 
   Future<File> _getFile() async{
