@@ -74,15 +74,31 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(top:7.0),
-              itemCount: _todoList.length,
-              itemBuilder:buildItens,
-            ),
+            child: RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView.builder(
+                  padding: EdgeInsets.only(top:7.0),
+                  itemCount: _todoList.length,
+                  itemBuilder:buildItens,
+                ),
+            )
           )
         ],
       )
     );
+  }
+
+  Future<Null> _refresh() async
+  {
+    await Future.delayed(Duration(seconds: 1));
+
+    setState(() {
+      _todoList.sort((a,b){
+        if(a['check'] && !b['check']) return 1;
+        else if(!a['check'] && b['check']) return -1;
+        else return 0;
+      });
+    });
   }
 
   Widget buildItens (context,index){
